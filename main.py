@@ -1,9 +1,3 @@
-'''
-TODO
-- DISCORD JOIN LINK https://discord.com/api/oauth2/authorize?client_id=714568795456274472&permissions=3213376&scope=bot
-- Apply for Personal API Key
-'''
-# Custom op.gg scraper
 import op_gg_scraper
 import requests as r
 from bs4 import BeautifulSoup
@@ -20,12 +14,14 @@ from PIL import Image
 import re
 import random
 import glob
+import config
+
+API_KEY = config.API_KEY
+DISCORD_TOKEN = config.DISCORD_TOKEN
 
 music = glob.glob("music/*.mp3")
 cdn = 'https://ddragon.leagueoflegends.com/cdn/img/'
 regex = re.compile('[^a-zA-Z]')
-API_KEY = "RGAPI-22e57aa2-4d5e-4195-a11f-b6296653c3b9"
-DISCORD_TOKEN = "NzE0NTY4Nzk1NDU2Mjc0NDcy.XswkMA.tG2gh0cgQevOPLLPY22OGts4i5U"
 LOL = LolWatcher(API_KEY)
 REGION = "na1"
 db = TinyDB('db.json')
@@ -559,7 +555,7 @@ async def ingame(ctx, *args):
         more_game_data = LOL.spectator.by_summoner(REGION, db.search(Query().discord == ctx.author.id)[0]['id'])
         await ctx.send("Able to find your game. However, ingame data is currently in development")
         for participant in more_game_data['participants']:
-            if participant['summonerId'] == db.search(Query().discord == 645940845245104130)[2]['id']:
+            if participant['summonerId'] == db.search(Query().discord == 645940845245104130)[0]['id']:
                 await ctx.send(f"Your team is {participant['teamId']} and your summoner is {participant['summonerName']}")
     except ApiError as err:
         if err.response.status_code == 429:

@@ -1,0 +1,7 @@
+riotwatcher
+requests
+Pillow
+tinydb
+beautifulsoup4
+discord
+gtts

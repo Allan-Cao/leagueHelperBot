@@ -19,6 +19,7 @@ import config
 API_KEY = config.API_KEY
 DISCORD_TOKEN = config.DISCORD_TOKEN
 
+marco_music = glob.glob("marco/*.mp3")
 music = glob.glob("music/*.mp3")
 cdn = 'https://ddragon.leagueoflegends.com/cdn/img/'
 regex = re.compile('[^a-zA-Z]')
@@ -134,7 +135,8 @@ except ApiError as err:
     else:
         raise
 
-bot = commands.Bot(command_prefix='$')
+bot = commands.Bot(command_prefix=config.PREFIX)
+bot.remove_command('help')
 
 @bot.event
 async def on_ready():
@@ -147,6 +149,29 @@ async def on_message(message):
     if message.author == bot.user:
             return
     await bot.process_commands(message)
+
+@bot.command(name='help',
+            brief='Custom help command',
+            pass_context=True)
+async def help(ctx):
+    embed=discord.Embed(title="Commands for TheBigBrainBot", description="INDEV means I'm still working on it", color=0x4d70ff)
+    embed.set_thumbnail(url="https://www.thesynergist.org/wp-content/uploads/2014/09/469564565.jpg")
+    embed.add_field(name="ability", value="Displays champion abilities", inline=False)
+    embed.add_field(name="about", value="(INDEV) Displays information about the champion", inline=False)
+    embed.add_field(name="build", value=f"{config.PREFIX}build [name] [lane] [starter/build/boots/none to show all]", inline=False)
+    embed.add_field(name="help", value="Shows this message", inline=False)
+    embed.add_field(name="ingame", value="(INDEV) Displays helpful information about your current game", inline=False)
+    embed.add_field(name="join", value=f"{config.PREFIX}join Joins your current voice channel", inline=False)
+    embed.add_field(name="leave", value=f"{config.PREFIX}leave Leaves your current voice channel", inline=False)
+    embed.add_field(name="marco", value=f"{config.PREFIX}marco Tries to untilt Marco", inline=False)
+    embed.add_field(name="pause", value=f"{config.PREFIX}pause Pauses the music", inline=False)
+    embed.add_field(name="resume", value=f"{config.PREFIX}resume Resumes the music", inline=False)
+    embed.add_field(name="runes", value=f"{config.PREFIX}runes [name] [lane] Champion runes", inline=False)
+    embed.add_field(name="synergy", value=f"{config.PREFIX}synergy [adc] [support]", inline=False)
+    embed.add_field(name="tilted", value=f"{config.PREFIX}tilted Tries to untilt you with music", inline=False)
+    embed.add_field(name="user", value=f"{config.PREFIX}user [add/remove/query]", inline=False)
+    embed.add_field(name="volume", value=f"{config.PREFIX}volume [0-100] Sets the volume", inline=False)
+    await self.bot.say(embed=embed)
 
 @bot.command(name='user',
             brief='Summoner names are used in the "ingame" command',
@@ -260,17 +285,16 @@ async def tilted(ctx):
     else:
         voice.play(discord.FFmpegPCMAudio(random.choice(music),executable='ffmpeg', **ffmpeg_options))
 
-@bot.command(name='marcoistilted',
+@bot.command(name='marco',
             brief='Tries to untilt Marco',
             pass_context=True)
-async def marcoistilted(ctx):
+async def marco(ctx):
     voice = get(bot.voice_clients, guild=ctx.guild)
     if voice == None:
         await ctx.send("I'm currently not in a voice channel", delete_after=20)
         return
     else:
-        source = discord.FFmpegPCMAudio("marco.mp3",executable='ffmpeg', **ffmpeg_options)
-        voice.play(source)
+        voice.play(discord.FFmpegPCMAudio(random.choice(marco_music),executable='ffmpeg', **ffmpeg_options))
 
 @bot.command(name='volume', aliases=['vol'], pass_context=True)
 async def volume(ctx, *, vol: float):
@@ -280,18 +304,6 @@ async def volume(ctx, *, vol: float):
             await ctx.send(f'**`{ctx.author}`**: Set the volume to **{vol}%**', delete_after=20)
     except:
         await ctx.send('Unknown error occured', delete_after=20)
-
-@bot.command(name='marcoisverytilted',
-            brief='Tries to untilt Marco with even more music',
-            pass_context=True)
-async def marcoisverytilted(ctx):
-    voice = get(bot.voice_clients, guild=ctx.guild)
-    if voice == None:
-        await ctx.send("I'm currently not in a voice channel", delete_after=20)
-        return
-    else:
-        voice.play(discord.FFmpegPCMAudio("marco2.mp3",executable='ffmpeg', **ffmpeg_options))
-
 
 @bot.command(name='pause',
             brief='Pauses the music',

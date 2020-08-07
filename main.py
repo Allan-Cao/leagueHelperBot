@@ -171,7 +171,7 @@ async def help(ctx):
     embed.add_field(name="tilted", value=f"{config.PREFIX}tilted Tries to untilt you with music", inline=False)
     embed.add_field(name="user", value=f"{config.PREFIX}user [add/remove/query]", inline=False)
     embed.add_field(name="volume", value=f"{config.PREFIX}volume [0-100] Sets the volume", inline=False)
-    await self.bot.say(embed=embed)
+    await ctx.send(embed=embed)
 
 @bot.command(name='user',
             brief='Summoner names are used in the "ingame" command',
